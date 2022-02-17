@@ -150,3 +150,27 @@ class APNSClient:
             return getattr(exceptions, exception_class_name)
         except AttributeError:
             raise NotImplementedError(f'Reason not implemented: {reason}')
+
+
+class CertificateAPNSClient(APNSClient):
+
+    def __init__(self, mode, cert_path, key_path, proxies=None):
+        super(APNSClient, self).__init__()
+        self._base_url = self.BASE_URLS[mode]
+        self._cert_path = (cert_path, key_path)
+        self._client_storage = None
+        self.proxies = proxies
+
+    def close(self):
+        logger.debug('Closed.')
+        self._reset_client()
+
+    @property
+    def _client(self):
+        if self._client_storage is None:
+            logger.debug('Creating a new client instance.')
+            limits = httpx.Limits(max_connections=1, max_keepalive_connections=0)
+            self._client_storage = httpx.Client(
+                cert=self._cert_path, proxies=self.proxies,
+                http2=True, timeout=10.0, limits=limits, base_url=self._base_url)
+        return self._client_storage
