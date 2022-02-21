@@ -1,5 +1,6 @@
 from .client import (
     APNSClient,
+    CertificateAPNSClient,
 )
 
 from .exceptions import (
