@@ -171,6 +171,6 @@ class CertificateAPNSClient(APNSClient):
             logger.debug('Creating a new client instance.')
             limits = httpx.Limits(max_connections=1, max_keepalive_connections=0)
             self._client_storage = httpx.Client(
-                cert=self._cert_path, proxies=self.proxies,
+                cert=self._cert_path, proxy=self.proxies,
                 http2=True, timeout=10.0, limits=limits, base_url=self._base_url)
         return self._client_storage
